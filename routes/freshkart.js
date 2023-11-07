@@ -11,5 +11,5 @@ router.route("/products/new").post(controllers.addNewProducts);
 router.route("/products/:id").delete(controllers.deleteProductById);
 
 module.exports = router;
-// router.route("/login").post(controllers.login);
 // router.route("/register").post(controllers.newLogin);
+// router.route("/login").post(controllers.login);
