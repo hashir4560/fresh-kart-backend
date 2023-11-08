@@ -132,26 +132,50 @@ exports.userLogin = async (req, res, next) => {
 //     return next(new AppError(err, 500));
 //   }
 // };
+
 exports.updateUserPassword = async (req, res, next) => {
   try {
     const { email, oldPassword, newPassword } = req.body;
 
     const conn = await createDatabaseConnection();
 
+    const checkEmailQuery = `
+      SELECT password FROM freshkart.user
+      WHERE email = ?;
+    `;
+
+    const [userRow] = await conn.query(checkEmailQuery, [email]);
+
+    if (!userRow.length) {
+      return res.status(400).json({
+        status: "error",
+        message: "User not found. Invalid email.",
+      });
+    }
+
+    const storedPassword = userRow[0].password;
+
+    if (storedPassword !== oldPassword) {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid old password.",
+      });
+    }
+
     const updateQuery = `
       UPDATE freshkart.user
       SET password = ?
-      WHERE email = ? AND password = ?;
+      WHERE email = ?;
     `;
 
-    const updateValues = [newPassword, email, oldPassword];
+    const updateValues = [newPassword, email];
 
     const updateResult = await conn.query(updateQuery, updateValues);
 
     if (updateResult.affectedRows === 0) {
       return res.status(400).json({
         status: "error",
-        message: "Invalid old password or no changes made to the password",
+        message: "No changes made to the password",
       });
     }
 
