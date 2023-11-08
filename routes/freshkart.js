@@ -7,7 +7,6 @@ router.route("/products/:id").get(controllers.getItemById);
 router.route("/products/:type/:popular").get(controllers.getAllPopularItems); // Define this route first
 router.route("/products/:type").get(controllers.getItemByType);
 router.route("/products/new").post(controllers.addNewProducts);
-
 router.route("/products/:id").delete(controllers.deleteProductById);
 
 module.exports = router;
